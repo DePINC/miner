@@ -1,0 +1,10 @@
+{
+    "dependencies": [
+        "openssl",
+        "utf8proc",
+        "asio",
+        "curl",
+        "plog",
+        "cxxopts"
+    ]
+}

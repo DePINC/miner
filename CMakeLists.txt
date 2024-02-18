@@ -69,6 +69,19 @@ target_link_libraries(depinc-miner PRIVATE
 
 if (WIN32)
     target_link_libraries(depinc-miner PRIVATE ws2_32 -static)
+
+    execute_process(COMMAND git describe --tags --long OUTPUT_VARIABLE bin_ver OUTPUT_STRIP_TRAILING_WHITESPACE)
+    set(OUTPUT_PACKAGE_NAME "DePINCMiner-${CMAKE_SYSTEM_NAME}-${bin_ver}.zip")
+    message(STATUS "Packing file: ${OUTPUT_PACKAGE_NAME}...")
+    add_custom_target(build-pkg
+        DEPENDS ${OUTPUT_PACKAGE_NAME}
+    )
+    add_custom_command(
+        OUTPUT ${OUTPUT_PACKAGE_NAME}
+        COMMAND zip ${OUTPUT_PACKAGE_NAME} depinc-miner.exe
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        DEPENDS depinc-miner
+    )
 endif()
 
 target_include_directories(depinc-miner PRIVATE

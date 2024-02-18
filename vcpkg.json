@@ -5,6 +5,7 @@
         "asio",
         "curl",
         "plog",
-        "cxxopts"
+        "cxxopts",
+        "gmp"
     ]
 }

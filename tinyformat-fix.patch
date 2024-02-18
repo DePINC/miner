@@ -1,0 +1,27 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 391d176..e5dae07 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -20,22 +20,3 @@ endif()
+ project(tinyformat)
+ cmake_minimum_required(VERSION 2.8)
+ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+-
+-if(WIN32)
+-    # Treat warnings as errors.  Would set this above, but need the default
+-    # flags too, and `project()` behaves is differently on different systems.
+-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3 /WX")
+-endif()
+-
+-add_executable(tinyformat_test tinyformat_test.cpp)
+-enable_testing()
+-if(CMAKE_CONFIGURATION_TYPES)
+-    set(ctest_config_opt -C ${CMAKE_BUILD_TYPE})
+-endif()
+-add_test(NAME test COMMAND tinyformat_test)
+-add_custom_target(testall COMMAND ${CMAKE_CTEST_COMMAND} -V ${ctest_config_opt} DEPENDS tinyformat_test)
+-
+-option(COMPILE_SPEED_TEST FALSE)
+-if (COMPILE_SPEED_TEST)
+-    add_executable(tinyformat_speed_test tinyformat_speed_test.cpp)
+-endif ()

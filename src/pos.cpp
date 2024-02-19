@@ -128,8 +128,9 @@ bool CPlotFile::GetQualityString(uint256 const& challenge, std::vector<QualitySt
         }
         out = qs_pack_vec;
         return true;
-    } catch (std::exception const&) {
-        // TODO: need to process this exception
+    } catch (std::exception const& e) {
+        // don't know what to do, just throw it
+        throw;
     }
     return false;
 }

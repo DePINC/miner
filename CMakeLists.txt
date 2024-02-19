@@ -78,7 +78,7 @@ if (WIN32)
     )
     add_custom_command(
         OUTPUT ${OUTPUT_PACKAGE_NAME}
-        COMMAND zip ${OUTPUT_PACKAGE_NAME} depinc-miner.exe
+        COMMAND zip -j -9 ${OUTPUT_PACKAGE_NAME} depinc-miner.exe libs/green_reaper/lib/bladebit_harvester.dll
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         DEPENDS depinc-miner
     )

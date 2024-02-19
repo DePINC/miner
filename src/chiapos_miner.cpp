@@ -130,7 +130,11 @@ Miner::Miner(RPCClient& client, Prover& prover, std::map<chiapos::PubKey, chiapo
           m_prover(prover),
           m_secre_keys(secre_keys),
           m_reward_dest(std::move(reward_dest)),
-          m_difficulty_constant_factor_bits(difficulty_constant_factor_bits) {}
+          m_difficulty_constant_factor_bits(difficulty_constant_factor_bits)
+{
+      // Initialize decompressor
+    chiapos::InitDecompressorQueueDefault();
+}
 
 Miner::~Miner() {
     if (m_pthread_timelord) {

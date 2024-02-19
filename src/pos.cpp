@@ -12,6 +12,17 @@
 
 namespace chiapos {
 
+void InitDecompressorQueueDefault(bool no_cuda)
+{
+    static bool initialized = false;
+    if (initialized) {
+        return;
+    }
+    decompressor_context_queue.init(1, (uint32_t)std::thread::hardware_concurrency(), false, 9, !no_cuda, 0, false, 10);
+    initialized = true;
+}
+
+
 Bytes ToBytes(LargeBits const& src) {
     int num_bits = src.GetSize();
     if (num_bits == 0) {

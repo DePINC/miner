@@ -12,6 +12,8 @@
 
 namespace chiapos {
 
+void InitDecompressorQueueDefault(bool no_cuda = false);
+
 struct LargeBitsImpl;
 
 class LargeBitsDummy {

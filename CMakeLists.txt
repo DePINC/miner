@@ -73,7 +73,7 @@ if (WIN32)
     execute_process(COMMAND git describe --tags --long OUTPUT_VARIABLE bin_ver OUTPUT_STRIP_TRAILING_WHITESPACE)
     set(OUTPUT_PACKAGE_NAME "DePINCMiner-${CMAKE_SYSTEM_NAME}-${bin_ver}.zip")
     message(STATUS "Packing file: ${OUTPUT_PACKAGE_NAME}...")
-    add_custom_target(build-pkg
+    add_custom_target(pkg
         DEPENDS ${OUTPUT_PACKAGE_NAME}
     )
     add_custom_command(

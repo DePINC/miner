@@ -42,7 +42,7 @@ struct ClientDesc {
 class Miner {
 public:
     Miner(RPCClient& client, Prover& prover, std::map<chiapos::PubKey, chiapos::SecreKey> secre_keys,
-          std::string reward_dest, int difficulty_constant_factor_bits);
+          std::string reward_dest, int difficulty_constant_factor_bits, bool no_cuda, int max_compression_level, int timeout_seconds);
 
     ~Miner();
 

@@ -125,15 +125,15 @@ chiapos::optional<RPCClient::PosProof> QueryBestPosProof(Prover& prover, uint256
 static int const CHECKING_VDF_INTERVAL_SECS = 22;
 
 Miner::Miner(RPCClient& client, Prover& prover, std::map<chiapos::PubKey, chiapos::SecreKey> secre_keys,
-             std::string reward_dest, int difficulty_constant_factor_bits)
+             std::string reward_dest, int difficulty_constant_factor_bits, bool no_cuda, int max_compression_level, int timeout_seconds)
         : m_client(client),
           m_prover(prover),
           m_secre_keys(secre_keys),
           m_reward_dest(std::move(reward_dest)),
           m_difficulty_constant_factor_bits(difficulty_constant_factor_bits)
 {
-      // Initialize decompressor
-    chiapos::InitDecompressorQueueDefault();
+    // Initialize decompressor
+    chiapos::InitDecompressorQueueDefault(no_cuda, max_compression_level, timeout_seconds);
 }
 
 Miner::~Miner() {

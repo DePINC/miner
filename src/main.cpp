@@ -125,6 +125,10 @@ struct Arguments {
     std::string datadir;                  // The root path of the data directory
     std::string cookie_path;              // The file stores the connecting information of current depinc server
     std::string posproofs_path;           // The pos proofs for testing timeing
+    // args for compressed plots
+    bool no_cuda;
+    int max_compression_leve;
+    int timeout_seconds;
 } g_args;
 
 miner::Config g_config;
@@ -176,7 +180,8 @@ int HandleCommand_Mining() {
     std::unique_ptr<miner::RPCClient> pclient = tools::CreateRPCClient(miner::g_config, miner::g_args.cookie_path);
     // Start mining
     miner::Miner miner(*pclient, prover, miner::ConvertSecureKeys(miner::g_config.GetSeeds()),
-                       miner::g_config.GetRewardDest(), miner::g_args.difficulty_constant_factor_bits);
+                       miner::g_config.GetRewardDest(), miner::g_args.difficulty_constant_factor_bits, miner::g_args.no_cuda,
+                       miner::g_args.max_compression_leve, miner::g_args.timeout_seconds);
     // do we have timelord service
     auto timelord_endpoints = miner::g_config.GetTimelordEndpoints();
     miner.StartTimelord(timelord_endpoints, 19191);
@@ -357,6 +362,9 @@ int main(int argc, char** argv) {
             ("cookie", "Full path to `.cookie` from depinc datadir",
              cxxopts::value<std::string>())                                                       // --cookie
             ("posproofs", "Path to the file contains PoS proofs", cxxopts::value<std::string>())  // --posproofs
+            ("no-cuda", "Do not use GPU to do the farming", cxxopts::value<bool>()->default_value("0")) // --no-cuda
+            ("max-compression-level", "The number of the level to support the max compression", cxxopts::value<int>()->default_value("9")) // --max-compression-level
+            ("timeout-seconds", "How many seconds to wait for the answer?", cxxopts::value<int>()->default_value("30")) // --timeout-seconds
             ("command", std::string("Command") + miner::GetCommandsList(),
              cxxopts::value<std::string>())  // --command
             ;
@@ -456,6 +464,10 @@ int main(int argc, char** argv) {
     }
 
     miner::g_args.difficulty_constant_factor_bits = result["dcf-bits"].as<int>();
+
+    miner::g_args.no_cuda = result["no-cuda"].as<bool>();
+    miner::g_args.max_compression_leve = result["max-compression-level"].as<int>();
+    miner::g_args.timeout_seconds = result["timeout-seconds"].as<int>();
 
     PLOG_INFO << "network: " << (miner::g_config.Testnet() ? "testnet" : "main");
 

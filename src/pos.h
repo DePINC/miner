@@ -12,7 +12,7 @@
 
 namespace chiapos {
 
-void InitDecompressorQueueDefault(bool no_cuda = false);
+void InitDecompressorQueueDefault(bool no_cuda = false, int max_compression_level = 9, int timeout_seconds = 30);
 
 struct LargeBitsImpl;
 

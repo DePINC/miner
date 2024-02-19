@@ -12,13 +12,13 @@
 
 namespace chiapos {
 
-void InitDecompressorQueueDefault(bool no_cuda)
+void InitDecompressorQueueDefault(bool no_cuda, int max_compression_level, int timeout_seconds)
 {
     static bool initialized = false;
     if (initialized) {
         return;
     }
-    decompressor_context_queue.init(1, (uint32_t)std::thread::hardware_concurrency(), false, 9, !no_cuda, 0, false, 10);
+    decompressor_context_queue.init(1, (uint32_t)std::thread::hardware_concurrency(), false, max_compression_level, !no_cuda, 0, false, timeout_seconds);
     initialized = true;
 }
 

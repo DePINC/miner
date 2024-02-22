@@ -174,19 +174,20 @@ chiapos::Bytes RPCClient::RetargetPledge(chiapos::Bytes const& tx_id, std::strin
     return chiapos::BytesFromHex(res.result.get_str());
 }
 
-RPCClient::MiningRequirement RPCClient::QueryMiningRequirement(std::string const& address,
-                                                               chiapos::PubKey const& farmer_pk) {
-    auto res = SendMethod(m_no_proxy, "queryminingrequirement", address, farmer_pk);
+RPCClient::MiningRequirement RPCClient::QueryMiningRequirement(std::string const& address) {
+    auto res = SendMethod(m_no_proxy, "queryminingrequirement", address);
     MiningRequirement mining_requirement;
-    mining_requirement.address = res.result["address"].get_str();
-    mining_requirement.req = res.result["require"].get_int64();
-    mining_requirement.mined_count = res.result["mined"].get_int();
-    mining_requirement.total_count = res.result["count"].get_int();
-    mining_requirement.burned = res.result["burned"].get_int64();
-    mining_requirement.supplied = res.result["supplied"].get_int64();
-    mining_requirement.accumulate = res.result["accumulate"].get_int64();
-    mining_requirement.height = res.result["height"].get_int();
-    mining_requirement.farmer_pk = chiapos::BytesFromHex(res.result["farmer-pk"].get_str());
+    auto summary = res.result["summary"];
+    mining_requirement.address = summary["address"].get_str();
+    mining_requirement.req = summary["require"].get_int64();
+    mining_requirement.mined_count = summary["mined"].get_int();
+    mining_requirement.total_count = summary["count"].get_int();
+    mining_requirement.burned = summary["burned"].get_int64();
+    mining_requirement.accumulate = summary["accumulate"].get_int64();
+    mining_requirement.supplied = summary["supplied"].get_int64();
+    mining_requirement.height = summary["height"].get_int();
+    mining_requirement.calc_height = summary["calc-height"].get_int();
+    // TODO mining_requirement.farmer_pk should be retrieved
     return mining_requirement;
 }
 

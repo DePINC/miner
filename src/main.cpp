@@ -230,8 +230,7 @@ int HandleCommand_Withdraw() {
 
 int HandleCommand_MiningRequirement() {
     std::unique_ptr<miner::RPCClient> pclient = tools::CreateRPCClient(miner::g_config, miner::g_args.cookie_path);
-    auto req = pclient->QueryMiningRequirement(miner::g_config.GetRewardDest(),
-                                               miner::GetSelectedKeyFromSeeds().GetPubKey());
+    auto req = pclient->QueryMiningRequirement(miner::g_config.GetRewardDest());
     int const PREFIX_WIDTH = 14;
     std::cout << std::setw(PREFIX_WIDTH) << "address: " << std::setw(15) << req.address << std::endl;
     std::cout << std::setw(PREFIX_WIDTH) << "mined: " << std::setw(15)

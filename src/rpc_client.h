@@ -123,6 +123,7 @@ public:
         CAmount supplied;
         CAmount accumulate;
         int height;
+        int calc_height;
         chiapos::Bytes farmer_pk;
     };
 
@@ -170,7 +171,7 @@ public:
 
     chiapos::Bytes RetargetPledge(chiapos::Bytes const& tx_id, std::string const& address);
 
-    MiningRequirement QueryMiningRequirement(std::string const& address, chiapos::PubKey const& farmer_pk);
+    MiningRequirement QueryMiningRequirement(std::string const& address);
 
     bool SubmitVdfRequest(uint256 const& challenge, uint64_t iters);
 

@@ -214,7 +214,10 @@ int HandleCommand_Deposit() {
     auto challenge = pclient->QueryChallenge();
     auto current_height = challenge.target_height - 1;
     PLOG_INFO << "height: " << current_height;
-    // auto params = miner::GetChainParams();
+    if (miner::g_args.check) {
+        std::cout << "Use: depinc-cli listpledgedebitofaddress/listpledgeloanofaddress instead.\n";
+        return 0;
+    }
     // Deposit with amount
     chiapos::Bytes tx_id = pclient->Deposit(miner::g_config.GetRewardDest(), miner::g_args.amount, miner::g_args.term);
     PLOG_INFO << "tx id: " << chiapos::BytesToHex(tx_id);

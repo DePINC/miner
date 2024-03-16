@@ -20,7 +20,6 @@
 #include <chrono>
 #include <cstdint>
 #include <mutex>
-#include <stdexcept>
 #include <thread>
 #include <tuple>
 #include <vector>
@@ -64,7 +63,7 @@ chiapos::QualityStringPack QueryTheBestQualityString(std::vector<chiapos::Qualit
                                     (int)qs_pack.k);
         if (best_iters == -1 || iters < best_iters) {
             res = qs_pack;
-            best_iters = iters;
+            best_iters = static_cast<int64_t>(iters);
             best_quality_in_plot = quality_in_plot;
             best_quality = quality;
         }
@@ -252,7 +251,7 @@ int Miner::Run() {
                 m_state = State::WaitVDF;
             } else if (m_state == State::WaitVDF) {
                 std::string estimate_time_str{"n/a"};
-                int estimate_seconds = m_current_iters / vdf_speed;
+                int estimate_seconds = static_cast<int>(m_current_iters / vdf_speed);
                 estimate_time_str = tinyformat::format(
                         "%s seconds (%s), vdf speed=%s ips", chiapos::MakeNumberStr(estimate_seconds),
                         chiapos::FormatTime(estimate_seconds), chiapos::MakeNumberStr(vdf_speed));
@@ -260,7 +259,7 @@ int Miner::Run() {
                           << ", iters: " << chiapos::FormatNumberStr(std::to_string(m_current_iters));
                 PLOGI << "estimate time: " << estimate_time_str << ", waiting for VDF proof...";
                 std::atomic_bool running{true};
-                BreakReason reason = CheckAndBreak(running, queried_challenge.target_duration * 1.5,
+                BreakReason reason = CheckAndBreak(running, static_cast<int>(static_cast<double>(queried_challenge.target_duration) * 1.5),
                                                    queried_challenge.challenge, m_current_challenge, m_current_iters,
                                                    m_prover.GetGroupHash(), m_prover.GetTotalSize(), vdf);
                 if (reason == BreakReason::ChallengeIsChanged) {
@@ -392,8 +391,9 @@ Miner::BreakReason Miner::CheckAndBreak(std::atomic_bool& running, int timeout_s
     // submit request to RPC server
     try {
         m_client.SubmitVdfRequest(current_challenge, iters);
-    } catch (std::exception const&) {
+    } catch (std::exception const& e) {
         // ignore the exception
+        LOGD << tinyformat::format("%s: Ignored error message from rpc 'vdf request' -> %s", __func__, e.what());
     }
     // before we get in the loop, we need to send the request to timelord if it is running
     if (m_pthread_timelord) {

@@ -1,6 +1,3 @@
-// #include <chainparams.h>
-// #include <chainparamsbase.h>
-
 #include <plog/Appenders/ConsoleAppender.h>
 #include <plog/Appenders/RollingFileAppender.h>
 #include <plog/Formatters/TxtFormatter.h>

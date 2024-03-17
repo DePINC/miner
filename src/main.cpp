@@ -9,15 +9,11 @@
 
 #include <asio.hpp>
 
-#include <chrono>
-#include <cstdint>
 #include <cxxopts.hpp>
 #include <fstream>
 #include <functional>
 #include <string>
-#include <thread>
 #include "block_fields.h"
-#include "pos.h"
 
 #ifdef _WIN32
 #include <shlobj.h>
@@ -273,57 +269,6 @@ struct ProofRecord {
     chiapos::CPosProof pos;
     chiapos::CVdfProof vdf;
 };
-
-class BlockGeneratingSimulator {
-public:
-    BlockGeneratingSimulator(uint64_t const& init_diff, uint64_t ips) : init_diff_(init_diff), ips_(ips) {}
-
-    uint64_t AdjustDifficulty(uint64_t curr_diff, chiapos::CPosProof const& pos, uint64_t duration,
-                              uint64_t target_duration, double diff_change_max_factor, double targetMulFactor) {
-        return chiapos::AdjustDifficulty(curr_diff, duration, target_duration, 0, diff_change_max_factor, init_diff_,
-                                         targetMulFactor);
-    }
-
-    uint64_t CalculateIterations(chiapos::CPosProof const& pos, int bits_filter, uint64_t diff,
-                                 uint8_t diff_factor_bits, int base_iters) {
-        auto mixed_quality_str = chiapos::MakeMixedQualityString(
-                chiapos::MakeArray<chiapos::PK_LEN>(pos.vchLocalPk),
-                chiapos::MakeArray<chiapos::PK_LEN>(pos.vchFarmerPk),
-                chiapos::MakePubKeyOrHash(static_cast<chiapos::PlotPubKeyType>(pos.nPlotType), pos.vchPoolPkOrHash),
-                pos.nPlotK, pos.challenge, pos.vchProof);
-        return chiapos::CalculateIterationsQuality(mixed_quality_str, diff, bits_filter, diff_factor_bits, pos.nPlotK,
-                                                   base_iters);
-    }
-
-    int CalculateDurationByIterations(uint64_t iters) const { return iters / ips_; }
-
-private:
-    uint64_t init_diff_;
-    uint64_t ips_;
-};
-
-template <typename T>
-T MakeRandomInt() {
-    int n = sizeof(T);
-    auto bytes = std::unique_ptr<uint8_t>(new uint8_t[n]);
-    for (int i = 0; i < n; ++i) {
-        bytes.get()[i] = rand() % 256;
-    }
-    T r;
-    memcpy(&r, bytes.get(), n);
-    return r;
-}
-
-uint256 MakeRandomUint256() {
-    int n = 256 / 64;
-    std::unique_ptr<uint64_t> r(new uint64_t[n]);
-    for (int i = 0; i < n; ++i) {
-        r.get()[i] = MakeRandomInt<uint64_t>();
-    }
-    uint256 res;
-    memcpy(res.begin(), r.get(), 256 / 8);
-    return res;
-}
 
 int main(int argc, char** argv) {
     plog::ConsoleAppender<plog::TxtFormatter> console_appender;

@@ -212,7 +212,13 @@ int HandleCommand_Deposit() {
         return 0;
     }
     // Deposit with amount
-    chiapos::Bytes tx_id = pclient->Deposit(miner::g_config.GetRewardDest(), miner::g_args.amount, miner::g_args.term);
+    std::string to_address;
+    if (!miner::g_args.address.empty()) {
+        to_address = miner::g_args.address;
+    } else {
+        to_address = miner::g_config.GetRewardDest();
+    }
+    chiapos::Bytes tx_id = pclient->Deposit(to_address, miner::g_args.amount, miner::g_args.term);
     PLOG_INFO << "tx id: " << chiapos::BytesToHex(tx_id);
     return 0;
 }

@@ -158,6 +158,16 @@ Bytes ToBytes(PubKeyOrHash const& val) { return std::visit(MakePubKeyOrHashBytes
 
 PlotPubKeyType GetType(PubKeyOrHash const& val) { return std::visit(GetPubKeyOrHashType(), val); }
 
+std::string TypeToString(PlotPubKeyType type) {
+    switch (type) {
+    case chiapos::PlotPubKeyType::OGPlots:
+        return "OGPlots";
+    case chiapos::PlotPubKeyType::PooledPlots:
+        return "PooledPlots";
+    }
+    throw std::runtime_error("invalid plot type");
+}
+
 CKey GenerateTapRootSk(PubKey const& localPk, PubKey const& farmerPk) {
     PubKey aggPk = AggregatePubkeys({localPk, farmerPk});
     Bytes vchSeed = MakeSHA256(BytesConnector::Connect(MakeBytes(aggPk), MakeBytes(localPk), MakeBytes(farmerPk)));

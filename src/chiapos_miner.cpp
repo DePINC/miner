@@ -76,6 +76,21 @@ chiapos::QualityStringPack QueryTheBestQualityString(std::vector<chiapos::Qualit
     return res;
 }
 
+template <typename Stream>
+Stream& operator<<(Stream& os, RPCClient::PosProof const& proof)
+{
+    os << "quality string: " << proof.mixed_quality_string.GetHex() << '\n';
+    os << "iters: " << proof.iters << '\n';
+    os << "challenge: " << proof.challenge.GetHex() << '\n';
+    os << "k: " << proof.k << '\n';
+    os << "plot_id: " << proof.plot_id.GetHex() << '\n';
+    os << "pool_pk_or_hash (type=" << chiapos::TypeToString(chiapos::GetType(proof.pool_pk_or_hash)) << "): "
+        << chiapos::BytesToHex(chiapos::ToBytes(proof.pool_pk_or_hash)) << '\n';
+    os << "local_pk: " << chiapos::BytesToHex(chiapos::MakeBytes(proof.local_pk)) << '\n';
+    os << "proof: " << chiapos::BytesToHex(proof.proof) << '\n';
+    return os;
+}
+
 chiapos::optional<RPCClient::PosProof> QueryBestPosProof(Prover& prover, uint256 const& challenge, uint64_t difficulty,
                                                          int difficulty_constant_factor_bits, int bits_filter,
                                                          int base_iters, chiapos::PubKey& out_farmer_pk,
@@ -111,11 +126,13 @@ chiapos::optional<RPCClient::PosProof> QueryBestPosProof(Prover& prover, uint256
     }
     PLOGI << "iters=" << chiapos::FormatNumberStr(std::to_string(proof.iters)) << ", k=" << (int)proof.k
           << ", farmer-pk: " << chiapos::BytesToHex(memo.farmer_pk);
-#ifdef DEBUG
     bool verified = chiapos::VerifyPos(challenge, proof.local_pk, chiapos::MakeArray<chiapos::PK_LEN>(memo.farmer_pk),
                                        proof.pool_pk_or_hash, proof.k, proof.proof, nullptr, bits_filter);
+    if (!verified) {
+        std::cout << proof << '\n';
+        throw std::runtime_error("The pos answer cannot be verified");
+    }
     assert(verified);
-#endif
     return proof;
 }
 

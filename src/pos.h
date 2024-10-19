@@ -78,6 +78,8 @@ Bytes ToBytes(PubKeyOrHash const& val);
 
 PlotPubKeyType GetType(PubKeyOrHash const& val);
 
+std::string TypeToString(PlotPubKeyType type);
+
 PubKeyOrHash MakePubKeyOrHash(PlotPubKeyType type, Bytes const& vchData);
 
 PlotId MakePlotId(PubKey const& localPk, PubKey const& farmerPk, PubKeyOrHash const& poolPkOrHash);
